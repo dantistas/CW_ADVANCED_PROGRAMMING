@@ -168,8 +168,6 @@ public class ServerWorker extends Thread{
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String sendTo = tokens[1]; // assigns sendTo from the input
         String body = tokens[2]; // assigns body from the input
-        System.out.println("sendTo: " + sendTo);
-        System.out.println("body: "+ body);
         boolean toUserDoesNotExist = false; // boolean value for if the userTo exist in the clients list.
         for(ServerWorker client : workers){ // runs for loop on all the clients
             if(sendTo.equalsIgnoreCase(client.userName)){ // checks if sendTo exist in the all clients list
