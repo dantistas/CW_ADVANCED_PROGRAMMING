@@ -87,8 +87,8 @@ public class ServerWorker extends Thread{
         sendNotification("Enter your username to join the chat server."); // invokes sendNotification method with one parameter, that is string
         while ((input = reader.readLine()) != null && userName == null ){ // while this particular client username and input exists, it is assigned to the user input
             if(input.length() != 0){ // checks if the input length is not  0, because it cannot assign "nothing" as a username
-                if(input.equalsIgnoreCase("swx")){
-                    sendNotification("Invalid username."); // invokes a sendNotification method
+                if(input.contains(" ")){ //checks if the username includes space
+                    sendNotification("Empty space is not allowed in the username."); // invokes a sendNotification method // sita paziurek.
                 }else{
                     boolean usernameExist = false; // boolean expression if the username already exist
                     for(ServerWorker client : workers){ //for loop to check if the given username already taken by any other user from the all clients list
@@ -194,12 +194,17 @@ public class ServerWorker extends Thread{
     public void addMember(String[] tokens, ServerWorker client) throws IOException { // addMember method, takes Array fo strings, and this particular client as argument
         String usernameToAdd = tokens[1]; // assigns username of the client that is going to be added to the member list
         if(client.isCoordinator){ // checks if the client that invoked this method is a coordinator.
+            boolean userNameToAddFound = false; // boolean value to check if the user to add exist in the all clients list
             for(ServerWorker worker : workers){ // runs a for loop on all clients list
                 if(worker.userName.equals(usernameToAdd)){ //  checks if the username matches username of the client from the all clients list
                     worker.isAMember = true; // if so assigns isMember state as true for that client
                     members.add(worker); // adds this client to the members list
+                    userNameToAddFound = true; // if exist changes boelean value
                     sendPublicNotification( worker.userName  + " successfully added to the members."); // invokes sendPublicNotification method
                 }
+            }
+            if(!userNameToAddFound){ //if user to add is not found in the all clients list
+                sendNotification(usernameToAdd + " can not be added to the members list, because it does not exist."); // send notification method invoked.
             }
         }else{ // if the client which invoked this method is not a coordinator
             sendNotification("Only coordinators allowed to add members."); // invokes sendPublicNotification method
@@ -209,12 +214,17 @@ public class ServerWorker extends Thread{
     public void removeMember(String[] tokens, ServerWorker client) throws IOException {// removeMember method, takes Array fo strings, and this particular client as argument
         String usernameToDelete = tokens[1]; // assigns username of the client that is going to be deleted from the member list
         if(client.isCoordinator){ // checks if the client that invoked this method is a coordinator.
+            boolean userNameToAddFound = false; // boolean value to check if the user to add exist in the all clients list
             for(ServerWorker worker : workers){ // runs a for loop on all clients list
                 if(worker.userName.equals(usernameToDelete)){ //  checks if the username matches username of the client from the all clients list
                     worker.isAMember = false; // if so assigns isMember state as false for that client
+                    userNameToAddFound = true;
                     members.remove(worker); // removes that client from the members list
                     sendPublicNotification( worker.userName  + " is removed from the members."); // invokes sendPublicNotification method
                 }
+            }
+            if(!userNameToAddFound){ //if user to add is not found in the all clients list
+                sendNotification(usernameToDelete + " can not be deleted from the members list, because it does not exist."); // send notification method invoked.
             }
         }else{ // if the client which invoked this method is not a coordinator
             sendNotification("Only coordinators allowed to remove members."); // invokes sendPublicNotification method
